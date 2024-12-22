@@ -92,6 +92,7 @@ frontend/
 │   ├── App.js
 │   └── index.js
 ```
+[Visit Site](https://filemanagerdb.netlify.app/register)
 
 ## Usage
 
