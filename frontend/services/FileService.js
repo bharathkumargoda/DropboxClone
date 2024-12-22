@@ -2,7 +2,7 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_BACKEND_FILES_URL || 'http://localhost:5000/api/files';
 console.log(API_URL);
 
-const token = localStorage.getItem('jwtToken');
+const token = localStorage.getItem('token');
 
 export const fetchFiles = async () => {
   try {
@@ -74,6 +74,7 @@ export const downloadFile = async (fileId) => {
         headers: { 'Authorization': `Bearer ${token}`}
     }
     const response = await axios(reqbod);
+    console.log("response", response);
     return response;
     
   } catch (error) {
