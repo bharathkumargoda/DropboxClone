@@ -8,6 +8,8 @@ This project is a web-based file management system built using React and Node.js
 - **File Upload:** Supports various file types (PDF, images, text files, etc.) with type and size validations.
 - **File Management:** Preview, download, and delete files.
 - **Metrics Dashboard:** Displays total files and file sizes.
+  
+![Alt text](preview.png)
 
 ## Tech Stack
 
