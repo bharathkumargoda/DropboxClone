@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const fileRoutes = require('./routes/fileRoutes');
-const folderRoutes = require('./routes/folderRoutes');
 const authMiddleware = require('./middlewares/authMiddleware');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
@@ -24,7 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
-app.use('/api/folders', folderRoutes);
+// app.use('/api/folders', folderRoutes);
 
 
 // Error handling middleware
