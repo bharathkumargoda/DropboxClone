@@ -50,8 +50,10 @@ This project is a web-based file management system built using React and Node.js
      ```
    - **Frontend: `/frontend/.env`**
      ```env
-     REACT_APP_API_URL=http://localhost:5000/api
+    VITE_BACKEND_FILES_URL = 'http://localhost:5000/api/files'
+    VITE_BACKEND_AUTH_URL = 'http://localhost:5000/api/auth'
      ```
+   Ensure that frontend .env starts with VITE_
 
 5. Start the backend server:
    ```bash
