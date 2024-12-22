@@ -5,25 +5,30 @@ import { downloadFile } from '../services/FileService';
 const FileView = () => {
   const { fileId } = useParams();
   const [fileData, setFileData] = useState(null);
-  const [fileName, setFileName] = useState('asdf');
-  const [fileType, setFileType] = useState('image/png');
+  const [fileType, setFileType] = useState('');
+  const [fileContent, setFileContent] = useState(null); // To store the file content (for text-based files)
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchFile = async () => {
       try {
         const response = await downloadFile(fileId);
-      
-        const blobURL = URL.createObjectURL(response.data);
-        console.log(blobURL);
-        // if (!metadataResponse.ok) {
-        //   throw new Error('Failed to fetch file metadata');
-        // }
+        
+        // Assuming the metadata comes with the file response
+        const fileTypeFromHeader = response.headers['content-type'];
+        console.log("reponse",fileTypeFromHeader );
 
-        // const metadata = await metadataResponse.json();
-        // setFileName(metadata.name);
-        // setFileType(metadata.type);
-        setFileData(blobURL);
+        setFileType(fileTypeFromHeader);  
+
+        const blobURL = URL.createObjectURL(response.data);
+
+        if (fileTypeFromHeader === 'text/plain' || fileTypeFromHeader === 'text/csv') {
+          // For text and CSV files, we'll read and display content
+          const textContent = await response.data.text(); // Use text() to extract text content from the blob
+          setFileContent(textContent);
+        } else {
+          setFileData(blobURL);
+        }
       } catch (err) {
         setError(err.message);
       }
@@ -36,18 +41,33 @@ const FileView = () => {
     return <div>Error: {error}</div>;
   }
 
-  if (!fileData) {
+  if (!fileData && !fileContent) {
     return <div>Loading file...</div>;
   }
 
   // Render based on file type
   return (
     <div>
-      <h2>{fileName}</h2>
       {fileType.startsWith('image/') ? (
-        <img src={fileData} alt={fileName} style={{ maxWidth: '100%' }} />
+        <img src={fileData} alt={"image"} style={{ maxWidth: '100%' }} />
       ) : fileType === 'application/pdf' ? (
-        <iframe src={fileData} type="application/pdf" width="100%" height="600px" />
+        <iframe src={fileData} type="application/pdf" width="100%" height="800px" />
+      ) : fileType === 'text/plain' || fileType === 'text/csv' ? (
+        <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{fileContent}</pre> // Display content for text/csv
+      ) : fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileType === 'application/msword' ? (
+        <iframe 
+          src={`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileData)}`} 
+          width="100%" 
+          height='800px'
+          title="Word Document"
+        />
+      ) : fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || fileType === 'application/vnd.ms-excel' ? (
+        <iframe 
+          src={`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileData)}`} 
+          width="100%" 
+          height="800px" 
+          title="Excel Spreadsheet"
+        />
       ) : (
         <div>Unsupported file type for preview</div>
       )}
