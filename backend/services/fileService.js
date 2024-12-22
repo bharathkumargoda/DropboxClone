@@ -41,12 +41,19 @@ exports.uploadFile = async (file, folderId, user) => {
 };
 
 exports.downloadFile = async (fileId, res) => {
-  const { metadata, data } = await simpleMongoStorage.downloadFile(fileId);
-  res.setHeader('Access-Control-Allow-Origin', '*'); 
-  // res.setHeader('Content-Disposition', `attachment; filename="${metadata.name}"`);
-  // res.setHeader('Content-Disposition', `inline; filename="${metadata.name}"`);
-  res.setHeader('Content-Type', metadata.type);
-  res.send(data);
+  try {
+    const { metadata, data } = await simpleMongoStorage.downloadFile(fileId);
+
+    // Set headers for file metadata
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', metadata.type);  // Set the Content-Type based on the file type
+
+    // Send the file data as response body
+    res.status(200).send(data);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    res.status(500).json({ message: 'Error downloading file' });
+  }
 };
 
 exports.getFiles = async (user) => {
