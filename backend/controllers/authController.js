@@ -33,24 +33,26 @@ exports.loginUser = async (req, res) => {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid email' });
+      return res.status(400).json({ message: 'Invalid email or' });
     }
 
     // Check password
-
-    // console.log("psass",user.password);
-    // const isPasswordValid = await bcrypt.compare(password, user.password);
+    // const isPasswordValid = await user.matchPassword(password);
+    // console.log("isPasswor", isPasswordValid);
     // if (!isPasswordValid) {
     //   return res.status(400).json({ message: 'Invalid email or password' });
     // }
 
     // Generate JWT
-    const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, user: user.email });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error during login:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
