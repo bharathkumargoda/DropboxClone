@@ -1,27 +1,38 @@
-// /services/AuthService.js
 import axios from 'axios';
 
-export const login = async (email, password, setUser) => {
+const API_URL = import.meta.env.VITE_BACKEND_AUTH_URL || 'http://localhost:5000/api/auth';
+console.log(`Auth API URL: ${API_URL}`);
+
+// Login function
+export const login = async (email, password) => {
   try {
-    const res = await axios.post('/api/auth/login', { email, password });
+    const res = await axios.post(`${API_URL}/login`, { email, password });
+    console.log("USer", res);
+    // Store token in local storage
     localStorage.setItem('token', res.data.token);
-    setUser(res.data.user);
+    // Update user context
+    localStorage.setItem('user', JSON.stringify(res.data.user));
   } catch (err) {
     console.error('Login failed:', err);
-    throw err; // Handle the error in the component that calls this
+    throw err; 
   }
 };
 
-export const fetchUser = async (setUser) => {
+// Register function
+export const register = async (email, password) => {
   try {
-    const res = await axios.get('/api/users/me', {
-      headers: {
-        'x-auth-token': localStorage.getItem('token')
-      }
-    });
-    setUser(res.data);
+    const res = await axios.post(`${API_URL}/register`, { email, password });
+    console.log('Registration successful:', res.data.message);
+    return res.data; // Return the response data to the calling component
   } catch (err) {
-    console.error('Fetch user failed:', err);
-    throw err;
+    console.error('Registration failed:', err);
+    throw err; // Pass the error to be handled in the calling component
   }
+};
+
+// Logout function (Optional: Clears the token and resets user data)
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  console.log('User logged out successfully.');
 };
