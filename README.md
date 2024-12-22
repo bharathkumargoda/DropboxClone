@@ -52,8 +52,8 @@ This project is a web-based file management system built using React and Node.js
      ```
    - **Frontend: `/frontend/.env`**
      ```env
-    VITE_BACKEND_FILES_URL='http://localhost:5000/api/files'
-    VITE_BACKEND_AUTH_URL='http://localhost:5000/api/auth'
+     VITE_BACKEND_FILES_URL=http://localhost:5000/api/files
+     VITE_BACKEND_AUTH_URL=http://localhost:5000/api/auth
      ```
 
 5. Start the backend server:
