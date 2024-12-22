@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import { deleteFile, downloadFile } from '../services/FileService';
@@ -8,8 +8,8 @@ import LoaderContext from '../contexts/LoaderContext';
 const FileList = ({ filteredFiles, setFiles }) => {
 
   const navigate = useNavigate();
-  const {isLoading, setIsLoading} = useContext(LoaderContext);
-    
+  const { isLoading, setIsLoading } = useContext(LoaderContext);
+
   const handleDelete = async (fileId) => {
     setIsLoading(true);
     await deleteFile(fileId);
@@ -34,39 +34,44 @@ const FileList = ({ filteredFiles, setFiles }) => {
     setIsLoading(false);
   };
 
+  const handleView = (fileId) => {
+    // Open the file view in a new tab
+    window.open(`/files/${fileId}`, '_blank');  // _blank opens in a new tab
+  };
+
   const columns = [
     { 
-        field: 'name',
-        headerName: 'File Name', 
-        flex: 2,
-        minWidth: 300,
-        maxWidth: 400, // Restrict max width
-        sortable: true,
-        renderCell: (params) => (
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={params.row.name}>
-            {params.row.name}
-          </div>
-        ),
+      field: 'name',
+      headerName: 'File Name', 
+      flex: 2,
+      minWidth: 300,
+      maxWidth: 400, // Restrict max width
+      sortable: true,
+      renderCell: (params) => (
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={params.row.name}>
+          {params.row.name}
+        </div>
+      ),
     },
     { field: 'type', headerName: 'Type', width: 150 },
     { field: 'createdAt', headerName: 'Uploaded Date', width: 190 },
     { field: 'size', headerName: 'Size (MB)', width: 150},
     {
-        field: 'actions',
-        headerName: 'Actions',
-        width: 300,
-        sortable: false,
-        filter : false,
-        renderCell: (params) => (
-          <>
-            <Button onClick={() => handleDownload(params.row._id,params.row.name)} style={{ marginRight: '0.5rem' }}>
-              Download
-            </Button>
-            <Button onClick={() => handleDelete(params.row._id)}>Delete</Button>
-            <Button onClick={() => navigate(`/files/${params.row._id}`)}>View</Button>
-          </>
-        ),
-      },
+      field: 'actions',
+      headerName: 'Actions',
+      width: 300,
+      sortable: false,
+      filter: false,
+      renderCell: (params) => (
+        <>
+          <Button onClick={() => handleDownload(params.row._id, params.row.name)} style={{ marginRight: '0.5rem' }}>
+            Download
+          </Button>
+          <Button onClick={() => handleDelete(params.row._id)}>Delete</Button>
+          <Button onClick={() => handleView(params.row._id)}>View</Button> {/* Open FileView in new tab */}
+        </>
+      ),
+    },
   ];
 
   return (
@@ -86,7 +91,6 @@ const FileList = ({ filteredFiles, setFiles }) => {
         getRowId={(row) => row._id}
       />
     </Box>
-  
   );
 };
 
