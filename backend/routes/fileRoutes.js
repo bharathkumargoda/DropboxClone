@@ -1,14 +1,22 @@
-const mongoose = require('mongoose');
-
-const FileSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  type: { type: String, required: true },
-  size: { type: Number, required: true },
-  folder: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder', default: null },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  path: { type: mongoose.Schema.Types.ObjectId, ref: 'FileData', required: false},
-  createdAt: { type: Date, default: Date.now },
-});
+const express = require('express');
+const multer = require('multer');
+const fileController = require('../controllers/fileController');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const authMiddleware = require('../middlewares/authMiddleware');
 
 
-module.exports = mongoose.model('File', FileSchema);
+const router = express.Router();
+
+// Upload File
+router.post('/upload', authMiddleware, upload.single('file'), fileController.uploadFile);
+
+// Get All Files
+router.get('/',authMiddleware, fileController.getFiles);
+
+// Download file
+router.get('/download/:id', fileController.downloadFile);
+
+router.delete('/delete/:id', fileController.deleteFile)
+
+module.exports = router;
